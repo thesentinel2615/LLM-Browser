@@ -10,6 +10,7 @@ const SettingsForm = () => {
     const [showPrompt, setShowPrompt] = useState(false);
     const [maxLength, setMaxLength] = useState(50);
     const [temperature, setTemperature] = useState(0.6);
+    const [apiKey, setApiKey] = useState('');
 
     useEffect(() => {
         fetchBrowserSettings();
@@ -24,6 +25,7 @@ const SettingsForm = () => {
             setBrowser(data.browser || 'Chrome');
             setMaxLength(data.maxLength || 50);
             setTemperature(data.temperature || 0.6);
+            setApiKey(data.apiKey || '');
         })
         .catch((error) => {
         console.error('Error fetching settings:', error);
@@ -42,6 +44,7 @@ const SettingsForm = () => {
             browser,
             maxLength,
             temperature,
+            apiKey,
             }),
         })
         .then((res) => res.json())
@@ -99,7 +102,16 @@ const SettingsForm = () => {
                     Full Auto Mode
                     </label>
                 </div>
-    
+                <div className="flex flex-col items-center">
+                    <label htmlFor="apiKey" className="text-xl font-medium">API Key:</label>
+                    <input
+                    type="text"
+                    id="apiKey"
+                    value={apiKey}
+                    onChange={(e) => setApiKey(e.target.value)}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                    />
+                </div>
                 <div>
                     <label htmlFor="browser" className="block text-xl font-medium">
                     Browser:
@@ -109,7 +121,7 @@ const SettingsForm = () => {
                     id="browser"
                     value={browser}
                     onChange={(e) => setBrowser(e.target.value)}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
                     >
                     <option value="Chrome">Chrome</option>
                     <option value="Firefox">Firefox</option>

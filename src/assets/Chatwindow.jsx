@@ -29,10 +29,29 @@ const Chatwindow = () => {
             isIncoming: false,
             timestamp: Date.now(),
         };
-        const updatedMessages = [...messages, newMessage];
-        setMessages(updatedMessages); // Update messages state with the new user message
+        let updatedMessages = [...messages, newMessage];
+        if(text.startsWith('!')){ // If the user message starts with an exclamation mark, it is a command
+            const command = text.split(' ')[0].substring(1);
+            switch (command.toLowerCase()) {
+                case 'restart':
+                    setMessages([{sender: 'Chatbot', text: "Welcome to the LLM Browser! Type in your request to get started!", isIncoming: true, timestamp: Date.now()}]);
+                    break;
+                case 'confirm':
+                    setMessages([...updatedMessages, {sender: 'Chatbot', text: "Confirmed!", isIncoming: true, timestamp: Date.now()}]);
+                    handleCrawlerCommand('confirm');
+                    break;
+                case 'help':
+                    setMessages([...updatedMessages, {sender: 'Chatbot', text: "Available commands: !confirm, !help, !restart.", isIncoming: true, timestamp: Date.now()}]);
+                default:
+                    setMessages([...updatedMessages, {sender: 'Chatbot', text: "Command not recognized!", isIncoming: true, timestamp: Date.now()}]);
+                    break;
+        }if(messages.length === 1 || messages[messages.length-2].text === 'Welcome to the LLM Browser! Type in your request to get started!'){
+            handleCrawlerCommand('objective', text);
+            setMessages([...updatedMessages, {sender: 'Chatbot', text: `Objective: "${text}"`, isIncoming: true, timestamp: Date.now()}]);
+        }
+
+        } // Update messages state with the new user message
         saveConversation({conversationName: conversation.conversationName, messages: updatedMessages});
-        handleChatbotResponse(updatedMessages); // Pass updatedMessages instead of messages
     };
       
     const handleMessageKeyDown = (event) => {
