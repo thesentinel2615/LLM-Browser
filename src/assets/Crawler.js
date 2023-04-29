@@ -66,38 +66,31 @@ class Crawler {
   
 
   async summarizeResults() {
-      const results = [];
-      for (let i = 0; i < 3; i++) {
-          try {
-              // Get the search result URL
-              const link = this.page.locator(".tF2Cxc a[href]").nth(i);
-              const url = await link.getAttribute("href");
+    const results = [];
+    for (let i = 0; i < 3; i++) {
+        try {
+            // Get the search result URL
+            const link = this.page.locator(".tF2Cxc a[href]").nth(i);
+            const url = await link.getAttribute("href");
 
-              // Navigate to the search result URL
-              await this.page.goto(url, {timeout: 10000});
-              await this.page.waitForLoadState("networkidle");
+            // Navigate to the search result URL
+            await this.page.goto(url, {timeout: 10000});
+            await this.page.waitForLoadState("networkidle");
 
-              // Extract the main content using Cheerio
-              const htmlContent = await this.page.content();
-              const $ = Cheerio.load(htmlContent);
-              const mainContent = $("body");
+            // Extract the main content using Cheerio
+            const htmlContent = await this.page.content();
+            const $ = Cheerio.load(htmlContent);
+            const mainContent = $("body");
 
-              // Append the main content to the results array
-              results.push(mainContent);
-          } catch {
-              console.log(`Error navigating to ${url}`);
-          }
-      }
-      return results;
+            // Append the main content to the results array
+            results.push(mainContent);
+        } catch {
+            console.log(`Error navigating to ${url}`);
+        }
+    }
+    return results;
   }
 
-  // This is a function that collects text and metadata from elements in the current viewport
-  // and returns them as an array of formatted strings.
-  // This method captures elements like links, buttons, inputs, images, and textareas,
-  // as well as their attributes and text content.
-  // The crawl method also filters out elements that don't hold any text or have click handlers,
-  // and it merges text from leaf #text nodes with their parent.
-  // This is written in Playwright using JavaScript.
   async snapshotAsFormattedText() {
     const filter = ["html", "head", "title", "meta", "iframe", "body", "script", "style", "path", "svg", "br", "::marker"];
     // Get only the elements that are input, textarea, a, button, img, or have text but are not in the header, footer, or meta tags
