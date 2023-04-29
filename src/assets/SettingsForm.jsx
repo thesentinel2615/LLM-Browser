@@ -71,7 +71,7 @@ const SettingsForm = () => {
             <span className="text-2xl font-bold mb-2 text-center items-center">{isOpen ? '-' : '+'}</span>
             </div>
             { isOpen && (
-                <form onSubmit={saveBrowserSettings} className="space-y-4">
+            <div>
                     <div
                     className="cursor-pointer flex items-center justify-between text-2xl font-bold"
                     onClick={() => setShowPrompt(!showPrompt)}
@@ -84,19 +84,18 @@ const SettingsForm = () => {
                             <TextareaAutosize
                             id="basePrompt"
                             value={basePrompt}
-                            onChange={(e) => setBasePrompt(e.target.value)}
-                            className="mt-1 block w-full border border-gray-700 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            onChange={(e) => {setBasePrompt(e.target.value); saveBrowserSettings();}}
+                            className="mt-1 block w-full border border-gray-700 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
                             />
                         </div>
                     )}
-    
                 <div className="flex items-center">
                     <input
                     type="checkbox"
                     id="fullAutoMode"
                     checked={fullAutoMode}
-                    onChange={(e) => setFullAutoMode(e.target.checked)}
-                    className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                    onChange={(e) => {setFullAutoMode(e.target.checked); saveBrowserSettings();}}
+                    className="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300 rounded"
                     />
                     <label htmlFor="fullAutoMode" className="ml-2 text-xl">
                     Full Auto Mode
@@ -108,7 +107,7 @@ const SettingsForm = () => {
                     type="text"
                     id="apiKey"
                     value={apiKey}
-                    onChange={(e) => setApiKey(e.target.value)}
+                    onChange={(e) => {setApiKey(e.target.value); saveBrowserSettings();}}
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
                     />
                 </div>
@@ -120,7 +119,7 @@ const SettingsForm = () => {
                     <select
                     id="browser"
                     value={browser}
-                    onChange={(e) => setBrowser(e.target.value)}
+                    onChange={(e) => {setBrowser(e.target.value); saveBrowserSettings();}}
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
                     >
                     <option value="Chrome">Chrome</option>
@@ -132,20 +131,20 @@ const SettingsForm = () => {
                 <div className="grid grid-cols-3 gap-4">
                     <span className="col-span-1 font-bold">Temperature</span>
                     <input className="col-span-1" type="range" min='0' max='1' step='0.01' value={temperature} onChange={(e) => setTemperature(e.target.value)} />
-                    <input className="col-span-1 character-field" id='input-container' type="number" min='0' max='1' step='0.01' value={temperature} onChange={(e) => setTemperature(e.target.value)} />
+                    <input className="col-span-1 character-field" id='input-container' type="number" min='0' max='1' step='0.01' value={temperature} onChange={(e) => {setTemperature(e.target.value); saveBrowserSettings();}} />
                 </div>
                 <div className="grid grid-cols-3 gap-4">
                     <span className="col-span-1 font-bold">Max Generation Length</span>
                     <input className="col-span-1" type="range" min='1' max='512' value={maxLength} onChange={(e) => setMaxLength(e.target.value)} />
-                    <input className="col-span-1 character-field" id='character-field' type="number" min='1' max='512' value={maxLength} onChange={(e) => setMaxLength(e.target.value)} />
+                    <input className="col-span-1 character-field" id='character-field' type="number" min='1' max='512' value={maxLength} onChange={(e) => {setMaxLength(e.target.value); saveBrowserSettings();}} />
                 </div>
                 <button
-                    type="submit"
-                    className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    onClick={() => saveBrowserSettings()}
+                    className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                 >
                     Save Settings
                 </button>
-                </form>
+            </div>
             )}
         </div>
     </div>

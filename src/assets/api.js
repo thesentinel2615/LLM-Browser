@@ -22,13 +22,14 @@ function getSettings() {
             'temperature': otherSettings.temperature,
             'base_prompt': otherSettings.basePrompt,
             'browser': otherSettings.browser,
+            'api_key': otherSettings.apiKey,
         }
         return customSettings;
     }
     return;
 };
 
-export async function characterTextGen(text, endpoint) {
+export async function characterTextGen(text) {
     let response;
     let generatedText;
     let customSettings = null;
@@ -40,7 +41,7 @@ export async function characterTextGen(text, endpoint) {
         customSettings = oai_defaults;
     }
     let createdPrompt = customSettings.base_prompt;
-    response = await axios.post(JS_API + `/completion`, { endpoint: endpoint, prompt: createdPrompt, settings: customSettings});
+    response = await axios.post(JS_API + `/completion`, { endpoint: customSettings.api_key, prompt: createdPrompt, settings: customSettings});
     generatedText = response.data.results[0]; 
     return generatedText;
 };
