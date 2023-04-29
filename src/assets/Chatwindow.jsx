@@ -27,7 +27,7 @@ const Chatwindow = () => {
             sender: 'User',
             text: text,
             isIncoming: false,
-            timestamp: now.getTime(),
+            timestamp: Date.now(),
         };
         const updatedMessages = [...messages, newMessage];
         setMessages(updatedMessages); // Update messages state with the new user message

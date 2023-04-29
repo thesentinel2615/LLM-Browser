@@ -17,10 +17,8 @@ function ChatboxInput({ onSend }) {
   };
 
   const handleSendClick = () => {
-    onSend(text, messageImage);
+    onSend(text);
     setText("");
-    setMessageImage(null);
-    setIsImpersonating(false);
   };
 
   const handleKeyDown = (event) => {
