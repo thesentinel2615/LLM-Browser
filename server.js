@@ -111,3 +111,30 @@ app.get('/fetchsettings', (req, res) => {
     }
   });
 });
+
+app.post('/completion', async (req, res) => {
+  try {
+    let { endpoint, prompt, settings } = req.body;
+    let response;
+    // Create a configuration object with your key
+    const configuration = new Configuration({
+      apiKey: endpoint,
+    });
+    // Create an openaiApi object with your configuration and headers
+    const openaiApi = new OpenAIApi(configuration);
+    try{
+      response = await openaiApi.createCompletion({
+        model: 'text-davinci-003',
+        prompt: prompt,
+        temperature: settings.temperature,
+        max_tokens: settings.max_tokens,
+      });
+      res.json({ results: [response.data.choices[0].text]})
+    } catch (error) {
+      console.log(error);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'An internal server error occurred.' });
+  }
+});
