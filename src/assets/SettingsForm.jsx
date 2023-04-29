@@ -64,8 +64,8 @@ const SettingsForm = () => {
             className="cursor-pointer flex items-center justify-between text-2xl font-bold"
             onClick={toggleAccordion}
             >
-            <span className="text-2xl font-bold mb-4 text-center items-center">LLM Browser Settings</span>
-            <span className="text-2xl font-bold mb-4 text-center items-center">{isOpen ? '-' : '+'}</span>
+            <span className="text-2xl font-bold mb-2 text-center items-center">LLM Browser Settings</span>
+            <span className="text-2xl font-bold mb-2 text-center items-center">{isOpen ? '-' : '+'}</span>
             </div>
             { isOpen && (
                 <form onSubmit={saveBrowserSettings} className="space-y-4">
