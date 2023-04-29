@@ -7,19 +7,28 @@ const oai_defaults = {
 }
 
 function getSettings() {
-    const settings = localStorage.getItem('generationSettings');
-    if(settings){
-        const parsedSettings = JSON.parse(settings);
+    let otherSettings = null;
+    fetch('/api/fetchsettings')
+    .then((res) => res.json())
+    .then((data) => {
+        otherSettings = data;
+    })
+    .catch((error) => {
+    console.error('Error fetching settings:', error);
+    });
+    if(otherSettings){
         const customSettings = {
-            'max_tokens': parsedSettings.max_length,
-            'temperature': parsedSettings.temperature,
+            'max_tokens': otherSettings.maxLength,
+            'temperature': otherSettings.temperature,
+            'base_prompt': otherSettings.basePrompt,
+            'browser': otherSettings.browser,
         }
         return customSettings;
     }
     return;
 };
 
-export async function characterTextGen(history, endpoint) {
+export async function characterTextGen(text, endpoint) {
     let response;
     let generatedText;
     let customSettings = null;
@@ -30,7 +39,8 @@ export async function characterTextGen(history, endpoint) {
     else{
         customSettings = oai_defaults;
     }
-    response = await axios.post(JS_API + `/completion`, { endpoint: endpoint, prompt: history, settings: customSettings});
+    let createdPrompt = customSettings.base_prompt;
+    response = await axios.post(JS_API + `/completion`, { endpoint: endpoint, prompt: createdPrompt, settings: customSettings});
     generatedText = response.data.results[0]; 
     return generatedText;
 };

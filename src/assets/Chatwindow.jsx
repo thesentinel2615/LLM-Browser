@@ -44,24 +44,22 @@ const Chatwindow = () => {
 
     return (
         <>
-        <div className="min-h-screen flex justify-center">
-            <div className="flex flex-col">
-                <div className="mx-auto max-w-full sm:min-w-full">
-                    <div className="h-[calc(75vh-7rem)] overflow-x-hidden relative flex flex-col justify-start bg-orange-800 mt-4 rounded-t-lg p-2 shadow-sm backdrop-blur-md md:max-w-[750px] md:min-w-[750px] md:h-[75vh] border-1 border-solid border-gray-500">
-                        {messages.map((message, index) => (
-                            <Message
-                            key={index}
-                            message={message}
-                            index={index}
-                            editedMessageIndex={editedMessageIndex}
-                            handleMessageKeyDown={handleMessageKeyDown}
-                            messages={messages}
-                            />
-                        ))}
-                        <div ref={messagesEndRef}></div>
-                    </div>
-                    <ChatboxInput onSend={handleUserSend}/>
+        <div className="flex flex-col">
+            <div className="mx-auto w-1/2">
+                <div className="h-[calc(75vh-7rem)] overflow-x-hidden relative flex flex-col justify-start bg-orange-800 mt-4 rounded-t-lg p-2 shadow-sm backdrop-blur-md md:h-[75vh] border-2 border-solid border-gray-500">
+                    {messages.map((message, index) => (
+                        <Message
+                        key={index}
+                        message={message}
+                        index={index}
+                        editedMessageIndex={editedMessageIndex}
+                        handleMessageKeyDown={handleMessageKeyDown}
+                        messages={messages}
+                        />
+                    ))}
+                    <div ref={messagesEndRef}></div>
                 </div>
+                <ChatboxInput onSend={handleUserSend}/>
             </div>
         </div>
       </>

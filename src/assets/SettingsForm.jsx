@@ -59,7 +59,7 @@ const SettingsForm = () => {
 
     return (
     <div className="flex items-center justify-center w-full">
-        <div className="bg-orange-800 p-8 rounded-lg shadow-md w-1/2">
+        <div className="bg-orange-800 p-4 rounded-lg shadow-md w-1/2 border-2 border-solid border-gray-500">
             <div
             className="cursor-pointer flex items-center justify-between text-2xl font-bold"
             onClick={toggleAccordion}

@@ -8,7 +8,7 @@ function App() {
   return (
     <>
 
-      <h1 className='text-2xl font-bold text-center mb-4 bg-orange-800 p-8 rounded-lg shadow-md w-fit ml-auto mr-auto'>LLM Browser</h1>
+      <h1 className='text-2xl font-bold text-center mb-4 bg-orange-800 p-4 rounded-lg shadow-md w-fit ml-auto mr-auto border-2 border-solid border-gray-500'>LLM Browser</h1>
       <SettingsForm/>
       <Chatwindow/>
     </>
