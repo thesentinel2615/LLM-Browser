@@ -90,39 +90,138 @@ class Crawler {
     }
     return results;
   }
+  
+  async crawl() {
+    const viewport = await this.page.viewportSize();
+    const scrollPosition = await this.page.evaluate(() => {
+      return {
+        x: window.scrollX,
+        y: window.scrollY,
+      };
+    });
+    const devicePixelRatio = await this.page.evaluate(() => window.devicePixelRatio);
 
-  async snapshotAsFormattedText() {
-    const filter = ["html", "head", "title", "meta", "iframe", "body", "script", "style", "path", "svg", "br", "::marker"];
-    // Get only the elements that are input, textarea, a, button, img, or have text but are not in the header, footer, or meta tags
-    const elements = await this.page.$$('input, textarea, a, button, img, :not(header), :not(footer)');
-    // Initialize an empty string to store the result
-    let result = 'CURRENT BROWSER CONTENT:\n------------------\n';
-    // Loop through each element
-    for (let element of elements) {
-      // Get the tag name of the element
-      const tagName = await element.evaluate(el => el.tagName.toLowerCase());
-      // Skip the element if it is in the filter list
-      if (filter.includes(tagName)) continue;
-      // Get the id of the element
-      const id = await element.evaluate(el => el.id);
-      // Get the alt text of the element if it has one
-      const alt = await element.evaluate(el => el.alt || '');
-      // Get the inner text of the element if it has one
-      const text = await element.evaluate(el => el.innerText || '');
-      // Create a line with the element information
-      let line = `<${tagName} id=${id} ${alt ? 'alt="' + alt + '"' : ''}>${text}</${tagName}>\n`;
-      // Check if the line already exists in the result string
-      if (result.indexOf(line) === -1) {
-        // Append the line to the result string if not
-        result += line;
+    // Capture a snapshot of the DOM
+    const domSnapshot = await this.page.evaluateHandle(() =>
+      document.documentElement.cloneNode(true)
+    );
+
+    // Initialize data structures
+    const elements_of_interest = [];
+    const blacklist = ["html", "head", "title", "meta", "iframe", "body", "script", "style", "path", "svg", "br", "::marker", "noscript"];
+
+    // Process DOM nodes recursively
+    async function processNode(node, parentId) {
+      // Filter out unwanted nodes
+      const nodeName = await this.page.evaluate((node) => node.nodeName, node);
+
+      if (blacklist.includes(nodeName)) return;
+    
+      const rect = await this.page.evaluate((node) => {
+        const rect = node.getBoundingClientRect();
+        return {
+          top: rect.top,
+          left: rect.left,
+          width: rect.width,
+          height: rect.height,
+        };
+      }, node);
+
+      if (
+        rect.left + rect.width < scrollPosition.x ||
+        rect.top + rect.height < scrollPosition.y ||
+        rect.left > scrollPosition.x + viewport.width ||
+        rect.top > scrollPosition.y + viewport.height
+      ) {
+        return;
+      }
+
+      // Extract attributes and text content
+      const attributes = {
+        type: node.getAttribute('type') || '',
+        placeholder: node.getAttribute('placeholder') || '',
+        ariaLabel: node.getAttribute('aria-label') || '',
+        title: node.getAttribute('title') || '',
+        alt: node.getAttribute('alt') || '',
+      };
+
+      const textContent = await this.page.evaluate((node) => node.textContent.trim(), node); // Use page.evaluate here
+
+      // Build tree structure
+      const element = {
+        id: `${parentId}_${nodeName}`,
+        nodeName,
+        attributes,
+        textContent,
+        children: [],
+      };
+
+      // Merge text nodes with their parent anchor or button elements
+      if (nodeName === 'A' || nodeName === 'BUTTON') {
+        element.textContent = textContent.replace(/\s+/g, ' ');
+      }
+
+      // Filter elements and format them
+      if (
+        textContent ||
+        node.onclick ||
+        ['A', 'BUTTON', 'INPUT', 'SELECT', 'TEXTAREA'].includes(nodeName)
+      ) {
+        const elementType =
+          nodeName === 'A'
+            ? 'LINK'
+            : nodeName === 'TEXT'
+            ? 'TEXT'
+            : nodeName.toLowerCase();
+        elements_of_interest.push({
+          id: element.id,
+          elementType,
+          metadata: {
+            nodeName: element.nodeName,
+            attributes: element.attributes,
+          },
+          text: element.textContent,
+        });
+      }
+
+      // Process child nodes
+      const childNodeHandles = await this.page.evaluateHandle((node) => {
+        const children = [];
+        for (const child of node.children) {
+          children.push(child);
+        }
+        return children;
+      }, node);
+
+      const childNodes = await childNodeHandles.getProperties();
+      await childNodeHandles.dispose();
+
+      for (const childNode of childNodes.values()) {
+        await processNode.bind(this)(childNode, element.id);
+        childNode.dispose();
       }
     }
-    // Append the closing line to the result string
-    result += '------------------\n';
-    // Return the result string
-    console.log(result);
-    return result;
+
+    // Measure time taken for processing the elements
+    console.time('processing_time');
+    await processNode.bind(this)(domSnapshot, 'root'); // Use bind here
+    console.timeEnd('processing_time');
+
+    return elements_of_interest;
   }
+
+  async formatElements(elements) {
+    let formattedOutput = 'CURRENT BROWSER CONTENT:\n';
+    formattedOutput += '------------------\n';
+
+    for (const element of elements) {
+      formattedOutput += `<${element.elementType} id=${element.id}>${element.text}</${element.elementType}>\n`;
+    }
+
+    formattedOutput += '------------------\n';
+    return formattedOutput;
+  }
+
 
 }
 export default Crawler;

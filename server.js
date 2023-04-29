@@ -81,7 +81,8 @@ app.get('/crawl', async (req, res) => {
   await crawler.init();
   await crawler.searchGoogle('bing');
   try {
-    const result = await crawler.snapshotAsFormattedText();
+    const elements = await crawler.crawl();
+    const result = await crawler.formatElements(elements);
     res.send(result);
   } catch (error) {
     res.status(500).send(error.message);
