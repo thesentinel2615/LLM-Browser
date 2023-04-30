@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 const CURRENT_URL = `${window.location.protocol}//${window.location.hostname}:${window.location.port}`;
 
 const JS_API = `${CURRENT_URL}/api`;
@@ -51,6 +52,7 @@ export async function fillPrompt(browser, objective, url, previousCommand, userS
     return prompt;
 }
 export async function handleCrawlerCommand(command, arg) {
+    let summary;
     switch(command.toLowerCase()){
         case 'objective':
             localStorage.setItem('isDone', 'false');
@@ -72,9 +74,7 @@ export async function handleCrawlerCommand(command, arg) {
                 let id = commasplit[0].split(" ")[1];
                 await axios.post(`/py/click/${id}`);
             } else if (currentCom.startsWith("SUMMARIZE")){
-                let pageData = await axios.get(`/py/summarize`);
-                let summary = pageData.data;
-                console.log(summary);
+                summary = await axios.post(`/api/summarize`, { url: localStorage.getItem('url')});
             }else if (currentCom.startsWith("GOOGLE")) {
                 let spacesplit = currentCom.split(" ");
                 let query = spacesplit.slice(1).join(" ");
@@ -124,6 +124,7 @@ async function getNewObjective(arg, userSuggestion) {
             'image': imageData.data.image,
             'url': url.data,
         }
+        localStorage.setItem('url', url.data);
         localStorage.setItem('objective', objective);
         localStorage.setItem('previousCommand', generatedText);
         return commandData;
@@ -131,3 +132,4 @@ async function getNewObjective(arg, userSuggestion) {
         console.log('Error');
     }
 }
+  
