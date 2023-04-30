@@ -76,19 +76,6 @@ app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
 
-app.get('/crawl', async (req, res) => {
-  const crawler = new Crawler();
-  await crawler.init();
-  await crawler.searchGoogle('bing');
-  try {
-    const elements = await crawler.crawl();
-    const result = await crawler.formatElements(elements);
-    res.send(result);
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
-});
-
 app.post('/savesettings', (req, res) => {
   const settings = req.body;
 

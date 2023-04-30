@@ -92,7 +92,7 @@ class Crawler {
   }
   
   async crawl() {
-    const viewport = await this.page.viewportSize();
+    const viewport = this.page.viewportSize();
     const scrollPosition = await this.page.evaluate(() => {
       return {
         x: window.scrollX,
@@ -108,14 +108,16 @@ class Crawler {
 
     // Initialize data structures
     const elements_of_interest = [];
-    const blacklist = ["html", "head", "title", "meta", "iframe", "body", "script", "style", "path", "svg", "br", "::marker", "noscript"];
+    const whitelist = ['A', 'BUTTON', 'INPUT', 'SELECT', 'TEXTAREA', 'IMG', 'P'];
+    const blacklist = ['SCRIPT', 'STYLE', 'NOSCRIPT', 'HEAD', 'META', 'SPAN', 'BR', 'FOOTER', 'HEADER'];
 
     // Process DOM nodes recursively
     async function processNode(node, parentId) {
       // Filter out unwanted nodes
       const nodeName = await this.page.evaluate((node) => node.nodeName, node);
+      const nodeType = await this.page.evaluate((node) => node.getAttribute('type'), node) || '';
 
-      if (blacklist.includes(nodeName)) return;
+      if (blacklist.includes(nodeName) || nodeType.toLowerCase() === 'text/javascript') return;
     
       const rect = await this.page.evaluate((node) => {
         const rect = node.getBoundingClientRect();
@@ -136,43 +138,45 @@ class Crawler {
         return;
       }
 
-      // Extract attributes and text content
-      const attributes = {
-        type: node.getAttribute('type') || '',
-        placeholder: node.getAttribute('placeholder') || '',
-        ariaLabel: node.getAttribute('aria-label') || '',
-        title: node.getAttribute('title') || '',
-        alt: node.getAttribute('alt') || '',
-      };
+      // Extract attributes and inner text
+      const attributes = await this.page.evaluate((node) => {
+        return {
+          type: node.getAttribute('type') || '',
+          placeholder: node.getAttribute('placeholder') || '',
+          ariaLabel: node.getAttribute('aria-label') || '',
+          title: node.getAttribute('title') || '',
+          alt: node.getAttribute('alt') || '',
+        };
+      }, node);
 
-      const textContent = await this.page.evaluate((node) => node.textContent.trim(), node); // Use page.evaluate here
+      const innerText = await this.page.evaluate((node) => node.innerText, node);
 
       // Build tree structure
       const element = {
         id: `${parentId}_${nodeName}`,
         nodeName,
         attributes,
-        textContent,
+        innerText,
         children: [],
       };
 
-      // Merge text nodes with their parent anchor or button elements
+      // Merge inner text nodes with their parent anchor or button elements
       if (nodeName === 'A' || nodeName === 'BUTTON') {
-        element.textContent = textContent.replace(/\s+/g, ' ');
+        element.innerText = innerText.replace(/\s+/g, ' ');
       }
 
       // Filter elements and format them
       if (
-        textContent ||
-        node.onclick ||
-        ['A', 'BUTTON', 'INPUT', 'SELECT', 'TEXTAREA'].includes(nodeName)
+        (innerText || node.onclick || whitelist.includes(nodeName)) &&
+        !blacklist.includes(nodeName) &&
+        nodeType.toLowerCase() !== 'text/javascript'
       ) {
         const elementType =
           nodeName === 'A'
             ? 'LINK'
             : nodeName === 'TEXT'
             ? 'TEXT'
-            : nodeName.toLowerCase();
+            : nodeName;
         elements_of_interest.push({
           id: element.id,
           elementType,
@@ -180,7 +184,7 @@ class Crawler {
             nodeName: element.nodeName,
             attributes: element.attributes,
           },
-          text: element.textContent,
+          text: element.innerText,
         });
       }
 
@@ -219,6 +223,7 @@ class Crawler {
     }
 
     formattedOutput += '------------------\n';
+    console.log(formattedOutput);
     return formattedOutput;
   }
 

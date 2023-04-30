@@ -5,7 +5,6 @@ import { defaultPrompt } from './Constants';
 const SettingsForm = () => {
     const [basePrompt, setBasePrompt] = useState('');
     const [fullAutoMode, setFullAutoMode] = useState(false);
-    const [browser, setBrowser] = useState('Chrome');
     const [isOpen, setIsOpen] = useState(false);
     const [showPrompt, setShowPrompt] = useState(false);
     const [maxLength, setMaxLength] = useState(50);
@@ -22,7 +21,6 @@ const SettingsForm = () => {
         .then((data) => {
             setBasePrompt(data.basePrompt || defaultPrompt);
             setFullAutoMode(data.fullAutoMode || false);
-            setBrowser(data.browser || 'Chrome');
             setMaxLength(data.maxLength || 50);
             setTemperature(data.temperature || 0.6);
             setApiKey(data.apiKey || '');
@@ -41,7 +39,6 @@ const SettingsForm = () => {
             body: JSON.stringify({
             basePrompt,
             fullAutoMode,
-            browser,
             maxLength,
             temperature,
             apiKey,
@@ -110,22 +107,6 @@ const SettingsForm = () => {
                     onChange={(e) => {setApiKey(e.target.value); saveBrowserSettings();}}
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
                     />
-                </div>
-                <div>
-                    <label htmlFor="browser" className="block text-xl font-medium">
-                    Browser:
-                    </label>
-                    <br />
-                    <select
-                    id="browser"
-                    value={browser}
-                    onChange={(e) => {setBrowser(e.target.value); saveBrowserSettings();}}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                    >
-                    <option value="Chrome">Chrome</option>
-                    <option value="Firefox">Firefox</option>
-                    <option value="Edge">Edge</option>
-                    </select>
                 </div>
                 <h1 className="block text-xl font-medium">Generation Settings:</h1>
                 <div className="grid grid-cols-3 gap-4">

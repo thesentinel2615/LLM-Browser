@@ -20,6 +20,13 @@ export default defineConfig({
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, ''),
         timeout: 0,
+      },
+      '/py': {
+        target: 'http://127.0.0.1:8000',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/py/, ''),
+        timeout: 0,
       }
     },
   },

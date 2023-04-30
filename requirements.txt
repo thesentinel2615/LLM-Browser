@@ -1,0 +1,7 @@
+playwright
+openai
+quart
+hypercorn
+aiowinreg
+beautifulsoup4
+lxml

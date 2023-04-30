@@ -4,11 +4,12 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "concurrently --kill-others-on-fail \"npm run server\" \"vite\"",
+    "dev": "concurrently \"npm run server\" \"npm run crawler\" \"vite\"",
     "build": "vite build",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "server": "nodemon --delay 2s --watch server.js server.js"
+    "server": "nodemon --delay 2s --watch server.js server.js",
+    "crawler": "python natbot.py"
   },
   "dependencies": {
     "autoprefixer": "^10.4.14",
