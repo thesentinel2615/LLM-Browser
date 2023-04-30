@@ -91,7 +91,7 @@ const SettingsForm = () => {
                             </button>
                         </div>
                     )}
-                <div className="flex items-center">
+                {/* <div className="flex items-center">
                     <input
                     type="checkbox"
                     id="fullAutoMode"
@@ -102,7 +102,7 @@ const SettingsForm = () => {
                     <label htmlFor="fullAutoMode" className="ml-2 text-xl">
                     Full Auto Mode
                     </label>
-                </div>
+                </div> */}
                 <div className="flex flex-col items-center">
                     <label htmlFor="apiKey" className="text-xl font-medium">API Key:</label>
                     <input
