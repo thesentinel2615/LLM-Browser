@@ -13,10 +13,6 @@ const Chatwindow = () => {
     }, [messages]);
 
     useEffect(() => {
-        const savedConversation = localStorage.getItem('conversation');
-        if (savedConversation) {
-            setMessages(JSON.parse(savedConversation).messages);
-        }
         if(messages.length === 0){
             setMessages([{sender: 'System', text: "Welcome to the LLM Browser! Type in your request prefixed by '!objective' to get started!", isIncoming: true, timestamp: Date.now()}]);
         }
