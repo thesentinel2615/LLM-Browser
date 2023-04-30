@@ -49,7 +49,7 @@ class Crawler:
 		self.page_element_buffer = {}
 
 	async def scroll(self, direction):
-		await self.page.wait_for_load_state("networkidle")
+		await self.page.wait_for_load_state("networkidle", timeout=60000)
 		if direction == "up":
 			await self.evaluate_with_retry(self.page, 
 				"(document.scrollingElement || document.body).scrollTop = (document.scrollingElement || document.body).scrollTop - window.innerHeight;"
@@ -60,11 +60,11 @@ class Crawler:
 			)
 	
 	async def get_page_url(self):
-		await self.page.wait_for_load_state("networkidle")
+		await self.page.wait_for_load_state("networkidle", timeout=60000)
 		return self.page.url
 	
 	async def screenshot(self):
-		await self.page.wait_for_load_state("networkidle")
+		await self.page.wait_for_load_state("networkidle", timeout=60000)
 		current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 		await self.page.screenshot(path=f'screenshots/{current_time}.png')
 		return f'{current_time}.png'
@@ -76,7 +76,7 @@ class Crawler:
 			links[i].removeAttribute("target");
 		}
 		"""
-		await self.page.wait_for_load_state("networkidle")
+		await self.page.wait_for_load_state("networkidle", timeout=60000)
 		await self.page.evaluate(js)
 
 		element = self.page_element_buffer.get(int(id))
@@ -101,7 +101,7 @@ class Crawler:
 		search_box = self.page.locator('textarea[name="q"]')
 		await search_box.fill(query)
 		await search_box.press("Enter")
-		await self.page.wait_for_load_state("networkidle")
+		await self.page.wait_for_load_state("networkidle", timeout=60000)
 
 	async def summarize_results(self):
 		results = []
@@ -122,7 +122,7 @@ class Crawler:
 		page = self.page
 		page_element_buffer = self.page_element_buffer
 		start = time.time()
-		await page.wait_for_load_state("networkidle")
+		await page.wait_for_load_state("networkidle", timeout=60000)
 		page_state_as_text = []
 
 		async def evaluate_device_pixel_ratio(page):
@@ -138,7 +138,7 @@ class Crawler:
 		if platform == "darwin" and device_pixel_ratio == 1:  # lies
 			device_pixel_ratio = 2
 
-		await self.page.wait_for_load_state("networkidle")
+		await self.page.wait_for_load_state("networkidle", timeout=60000)
 		win_scroll_x = await self.evaluate_with_retry(page, "window.scrollX")
 		win_scroll_y = await self.evaluate_with_retry(page, "window.scrollY")
 		win_upper_bound = await self.evaluate_with_retry(page, "window.pageYOffset")

@@ -9,6 +9,7 @@
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "server": "nodemon --delay 2s --watch server.js server.js",
+    "pyinstall": "pip install -r requirements.txt",
     "crawler": "python server.py"
   },
   "dependencies": {

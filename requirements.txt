@@ -1,5 +1,4 @@
 playwright
-openai
 quart
 hypercorn
 asyncio

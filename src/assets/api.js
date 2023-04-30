@@ -85,11 +85,12 @@ export async function handleCrawlerCommand(command, arg) {
                 let text = spacesplit.slice(2).join(" ");
                 // Strip leading and trailing double quotes
                 text = text.substring(1, text.length - 1);
-            
+                await axios.post(`/py/type/${id}/${text}`);
                 if (currentCom.startsWith("TYPESUBMIT")) {
                     text += '\n';
+                    await axios.post(`/py/enter`);
                 }
-                await axios.post(`/py/type/${id}/${text}`);
+
             }
             return await getNewObjective(objective);
         case 'suggest':
