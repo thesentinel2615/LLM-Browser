@@ -33,7 +33,8 @@ async def search(query):
     global playwright_instance
     if playwright_instance:
         print('Searching for ' + query)
-        return await playwright_instance.search_google(query)
+        await playwright_instance.search_google(query)
+        return ('Searching for ' + query)
     else:
         print('PlayWright instance is not running')
         return 'PlayWright instance is not running'
@@ -43,7 +44,8 @@ async def crawl():
     global playwright_instance
     if playwright_instance:
         print('Crawling')
-        return await playwright_instance.crawl()
+        await playwright_instance.crawl()
+        return ('Crawling')
     else:
         print('PlayWright instance is not running')
         return 'PlayWright instance is not running'
@@ -53,7 +55,8 @@ async def page(url):
     global playwright_instance
     if playwright_instance:
         print('Going to page ' + url)
-        return await playwright_instance.go_to_page(url)
+        await playwright_instance.go_to_page(url)
+        return ('Going to page ' + url)
     else:
         print('PlayWright instance is not running')
         return 'PlayWright instance is not running'
@@ -63,7 +66,8 @@ async def scroll(direction):
     global playwright_instance
     if playwright_instance:
         print('Scrolling ' + direction)
-        return await playwright_instance.scroll(direction)
+        await playwright_instance.scroll(direction)
+        return ('Scrolling ' + direction)
     else:
         print('PlayWright instance is not running')
         return 'PlayWright instance is not running'
@@ -73,7 +77,8 @@ async def click(selector):
     global playwright_instance
     if playwright_instance:
         print('Clicking ' + selector)
-        return await playwright_instance.click(selector)
+        await playwright_instance.click(selector)
+        return ('Clicking ' + selector)
     else:
         print('PlayWright instance is not running')
         return 'PlayWright instance is not running'
@@ -83,7 +88,8 @@ async def type(selector, text):
     global playwright_instance
     if playwright_instance:
         print('Typing ' + text + ' in ' + selector)
-        return await playwright_instance.type(selector, text)
+        await playwright_instance.type(selector, text)
+        return ('Typing ' + text + ' in ' + selector)
     else:
         print('PlayWright instance is not running')
         return 'PlayWright instance is not running'
@@ -93,7 +99,8 @@ async def enter():
     global playwright_instance
     if playwright_instance:
         print('Pressing enter')
-        return await playwright_instance.enter()
+        await playwright_instance.enter()
+        return ('Pressing enter')
     else:
         return 'PlayWright instance is not running'
 

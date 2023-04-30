@@ -16,7 +16,7 @@ class Crawler:
 	@classmethod
 	async def create(cls):
 		playwright = await async_playwright().__aenter__()
-		browser = await playwright.chromium.launch()
+		browser = await playwright.chromium.launch(headless=False)
 		crawler_instance = cls(playwright)
 		crawler_instance.browser = browser
 		crawler_instance.page = await browser.new_page()
