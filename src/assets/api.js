@@ -38,13 +38,16 @@ export async function characterTextGen(text) {
     return generatedText;
 };
 
-export async function fillPrompt(browser, objective, url, previousCommand) {
+export async function fillPrompt(browser, objective, url, previousCommand, userSuggestion) {
     let settings = await getSettings();
     let prompt = settings.base_prompt;
     prompt = prompt.replace('$url', url);
     prompt = prompt.replace('$browser_content', browser);
     prompt = prompt.replace('$objective', objective);
     prompt = prompt.replace('$previous_command', previousCommand);
+    if(userSuggestion !== null){
+    prompt = prompt.replace('$user_suggestion', userSuggestion);
+    }
     return prompt;
 }
 export async function handleCrawlerCommand(command, arg) {
@@ -65,13 +68,14 @@ export async function handleCrawlerCommand(command, arg) {
             } else if (currentCom.startsWith("DONE")) {
                 localStorage.setItem('isDone', 'true');
             } else if (currentCom.startsWith("CLICK")) {
-                console.log(currentCom);
                 let commasplit = currentCom.split(",");
-                console.log(commasplit)
                 let id = commasplit[0].split(" ")[1];
-                console.log(id)
                 await axios.post(`/py/click/${id}`);
-            } else if (currentCom.startsWith("GOOGLE")) {
+            } else if (currentCom.startsWith("SUMMARIZE")){
+                let pageData = await axios.get(`/py/summarize`);
+                let summary = pageData.data;
+                console.log(summary);
+            }else if (currentCom.startsWith("GOOGLE")) {
                 let spacesplit = currentCom.split(" ");
                 let query = spacesplit.slice(1).join(" ");
                 await axios.post(`/py/search/${query}`);
@@ -88,10 +92,14 @@ export async function handleCrawlerCommand(command, arg) {
                 await axios.post(`/py/type/${id}/${text}`);
             }
             return await getNewObjective(objective);
+        case 'suggest':
+            let userSuggestion = arg;
+            let currentObjective = localStorage.getItem('objective');
+            return await getNewObjective(currentObjective, userSuggestion);
     }
 
 }
-async function getNewObjective(arg) {
+async function getNewObjective(arg, userSuggestion) {
     let settings = await getSettings();
     let response;
     let generatedText;
@@ -107,7 +115,7 @@ async function getNewObjective(arg) {
     }
     let imageData = await axios.get(`/py/screenshot`);
     if(browser.data !== null){
-        prompt = await fillPrompt(browser.data, objective, (url.data).slice(0, 100), previousCommand);
+        prompt = await fillPrompt(browser.data, objective, (url.data).slice(0, 100), previousCommand, userSuggestion);
         response = await axios.post(`/api/completion`, { endpoint: settings.api_key, prompt: prompt, settings: settings});
         generatedText = response.data.results[0];
         let commandData = {

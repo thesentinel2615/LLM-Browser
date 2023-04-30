@@ -84,6 +84,11 @@ const SettingsForm = () => {
                             onChange={(e) => {setBasePrompt(e.target.value); saveBrowserSettings();}}
                             className="mt-1 block w-full border border-gray-700 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
                             />
+                            <button 
+                            className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                            onClick={() => setBasePrompt(defaultPrompt)}>
+                            Reset to Default Prompt
+                            </button>
                         </div>
                     )}
                 <div className="flex items-center">

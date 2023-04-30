@@ -1,4 +1,5 @@
 import base64
+import asyncio
 import datetime
 from playwright.async_api import async_playwright
 import time
@@ -6,7 +7,7 @@ from sys import argv, exit, platform
 from bs4 import BeautifulSoup
 
 black_listed_elements = set(["html", "head", "title", "meta", "iframe", "body", "script", "style", "path", "svg", "br", "::marker",])
-
+	
 class Crawler:
 	def __init__(self, playwright):
 		self.playwright = playwright
@@ -31,6 +32,18 @@ class Crawler:
 		if self.playwright:
 			await self.playwright.__aexit__()
 
+	async def evaluate_with_retry(self, page, expression, max_retries=3, initial_delay=1):
+		delay = initial_delay
+		for i in range(max_retries):
+			try:
+				result = await page.evaluate(expression)
+				return result
+			except Exception as e:
+				if i == max_retries - 1:
+					raise e
+				await asyncio.sleep(delay)
+				delay *= 2
+	    
 	async def go_to_page(self, url):
 		await self.page.goto(url=url if "://" in url else "http://" + url)
 		self.page_element_buffer = {}
@@ -38,11 +51,11 @@ class Crawler:
 	async def scroll(self, direction):
 		await self.page.wait_for_load_state("networkidle")
 		if direction == "up":
-			await self.page.evaluate(
+			await self.evaluate_with_retry(self.page, 
 				"(document.scrollingElement || document.body).scrollTop = (document.scrollingElement || document.body).scrollTop - window.innerHeight;"
 			)
 		elif direction == "down":
-			await self.page.evaluate(
+			await self.evaluate_with_retry(self.page,
 				"(document.scrollingElement || document.body).scrollTop = (document.scrollingElement || document.body).scrollTop + window.innerHeight;"
 			)
 	
@@ -95,17 +108,17 @@ class Crawler:
 		for i in range(3):
 			try:
 				# Get the search result URL
-				link = self.page.locator(".tF2Cxc a[href]").nth(i)
-				url = link.get_attribute("href")
+				link = await self.page.locator(".tF2Cxc a[href]").nth(i)
+				url = await link.get_attribute("href")
 
 				# Navigate to the search result URL
-				self.page.goto(url, timeout=10000)
-				self.page.wait_for_load_state("networkidle")
+				await self.page.goto(url, timeout=10000)
+				await self.page.wait_for_load_state("networkidle")
 
 				# Extract the main content using Beautiful Soup
-				html_content = self.page.content()
-				soup = BeautifulSoup(html_content, "lxml")
-				main_content = soup.find("body")
+				html_content = await self.page.content()
+				soup = await BeautifulSoup(html_content, "lxml")
+				main_content = await soup.find("body")
 
 				# Append the main content to the results array
 				results.append(main_content)
@@ -121,20 +134,30 @@ class Crawler:
 		await page.wait_for_load_state("networkidle")
 		page_state_as_text = []
 
-		device_pixel_ratio = await page.evaluate("window.devicePixelRatio")
+		async def evaluate_device_pixel_ratio(page):
+			try:
+				await page.wait_for_function("() => window.devicePixelRatio !== undefined")
+				device_pixel_ratio = await page.evaluate("window.devicePixelRatio")
+				return device_pixel_ratio
+			except Exception as e:
+				print(f"Error occurred: {e}")
+				# Handle the error or retry the operation if needed
+
+		device_pixel_ratio = await evaluate_device_pixel_ratio(page)
 		if platform == "darwin" and device_pixel_ratio == 1:  # lies
 			device_pixel_ratio = 2
 
-		win_scroll_x = await page.evaluate("window.scrollX")
-		win_scroll_y = await page.evaluate("window.scrollY")
-		win_upper_bound = await page.evaluate("window.pageYOffset")
-		win_left_bound = await page.evaluate("window.pageXOffset")
-		win_width = await page.evaluate("window.screen.width")
-		win_height = await page.evaluate("window.screen.height")
+		await self.page.wait_for_load_state("networkidle")
+		win_scroll_x = await self.evaluate_with_retry(page, "window.scrollX")
+		win_scroll_y = await self.evaluate_with_retry(page, "window.scrollY")
+		win_upper_bound = await self.evaluate_with_retry(page, "window.pageYOffset")
+		win_left_bound = await self.evaluate_with_retry(page, "window.pageXOffset")
+		win_width = await self.evaluate_with_retry(page, "window.screen.width")
+		win_height = await self.evaluate_with_retry(page, "window.screen.height")
 		win_right_bound = win_left_bound + win_width
 		win_lower_bound = win_upper_bound + win_height
-		document_offset_height = await page.evaluate("document.body.offsetHeight")
-		document_scroll_height = await page.evaluate("document.body.scrollHeight")
+		document_offset_height = await self.evaluate_with_retry(page, "document.body.offsetHeight")
+		document_scroll_height = await self.evaluate_with_retry(page, "document.body.scrollHeight")
 
 		percentage_progress_start = 1
 		percentage_progress_end = 2

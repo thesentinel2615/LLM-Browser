@@ -2,6 +2,6 @@ playwright
 openai
 quart
 hypercorn
-aiowinreg
+asyncio
 beautifulsoup4
 lxml

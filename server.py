@@ -63,7 +63,18 @@ async def page():
     else:
         print('PlayWright instance is not running')
         return 'PlayWright instance is not running'
-
+    
+@app.get('/summarize')
+async def summarize():
+    global playwright_instance
+    if playwright_instance:
+        print('Summarizing')
+        data = await playwright_instance.summarize_results()
+        return data
+    else:
+        print('PlayWright instance is not running')
+        return 'PlayWright instance is not running'
+    
 @app.get('/currentpage')
 async def currentpage():
     global playwright_instance

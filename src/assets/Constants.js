@@ -33,6 +33,8 @@ achieving your objective. And then interact with that page to achieve your objec
 If you find yourself on Google and there are no search results displayed yet, you should probably issue a command 
 like "GOOGLE "search query"" to get to a more useful page.
 
+If you recieve a user suggestion, you should probably you should probably do what it says.
+
 Then, if you find yourself on a Google search results page, you might issue the command "CLICK 24" to click
 on the first link in the search results. (If your previous command was a TYPESUBMIT your next command should
 probably be a CLICK.) If you've been tasked to gather information, you might issue the command "SUMMARIZE" to
@@ -67,6 +69,7 @@ CURRENT BROWSER CONTENT:
 ------------------
 OBJECTIVE: Find a 2 bedroom house for sale in Anchorage AK for under $750k
 CURRENT URL: https://www.google.com/
+USER SUGGESTION: Summarize the top search results.
 YOUR COMMAND: 
 GOOGLE "anchorage redfin"
 SUNMMARIZE
@@ -97,6 +100,7 @@ CURRENT BROWSER CONTENT:
 ------------------
 OBJECTIVE: Make a reservation for 4 at Dorsia at 8pm
 CURRENT URL: https://www.google.com/
+USER SUGGESTION: None given.
 YOUR COMMAND: 
 GOOGLE "dorsia nyc opentable"
 ==================================================
@@ -124,6 +128,7 @@ CURRENT BROWSER CONTENT:
 ------------------
 OBJECTIVE: Make a reservation for 4 for dinner at Dorsia in New York City at 8pm
 CURRENT URL: https://www.opentable.com/
+USER SUGGESTION: None given.
 YOUR COMMAND: 
 TYPESUBMIT 12 "dorsia new york city"
 ==================================================
@@ -137,6 +142,7 @@ $browser_content
 
 OBJECTIVE: $objective
 CURRENT URL: $url
+USER SUGGESTION: $user_suggestion
 PREVIOUS COMMAND: $previous_command
 YOUR COMMAND:
 `;

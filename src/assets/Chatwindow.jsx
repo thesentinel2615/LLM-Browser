@@ -60,6 +60,13 @@ const Chatwindow = () => {
                         setMessages([...updatedMessages, {sender: 'System', text: "**Recommend Command:** " + newCommand.text, image: newCommand.image, url: newCommand.url, isIncoming: true, timestamp: Date.now()}]);
                     }
                     break;
+                case 'suggest':
+                    setMessages([...updatedMessages, {sender: 'System', text: "is typing", isIncoming: true, timestamp: Date.now()}]);
+                    newCommand = await handleCrawlerCommand('suggest', objective);
+                    if(newCommand){
+                        setMessages([...updatedMessages, {sender: 'System', text: "**Recommend Command:** " + newCommand.text, image: newCommand.image, url: newCommand.url, isIncoming: true, timestamp: Date.now()}]);
+                    }
+                    break;
                 case 'help':
                     setMessages([...updatedMessages, {sender: 'System', text: "**Available commands:** !confirm, !help, !restart.", isIncoming: true, timestamp: Date.now()}]);
                     break;
