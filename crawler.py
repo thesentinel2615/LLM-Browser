@@ -49,7 +49,7 @@ class Crawler:
 		return self.page.url
 	
 	async def screenshot(self):
-		time.wait(10)
+		time.sleep(10)
 		current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 		await self.page.screenshot(path=f'screenshots/{current_time}.png')
 		return f'{current_time}.png'
