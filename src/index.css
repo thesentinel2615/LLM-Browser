@@ -70,15 +70,15 @@
 }
 
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 1em;
   background-color: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(3, 97, 31, 0.568);
-  border-radius: 3px;
+  background-color: rgba(0, 0, 0, 0.822);
+  border-radius: 1em;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(7, 99, 26, 0.466);
+  background-color: rgba(1, 17, 4, 0.616);
 }
