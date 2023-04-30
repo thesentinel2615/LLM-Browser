@@ -4,7 +4,7 @@ const CURRENT_URL = `${window.location.protocol}//${window.location.hostname}:${
 const JS_API = `${CURRENT_URL}/api`;
 const oai_defaults = {
     'max_tokens': 50,
-    'temperature': 0.6,
+    'temperature': 0.5,
 }
 
 async function getSettings() {
