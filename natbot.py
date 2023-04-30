@@ -44,8 +44,8 @@ async def crawl():
     global playwright_instance
     if playwright_instance:
         print('Crawling')
-        await playwright_instance.crawl()
-        return ('Crawling')
+        data = "\n".join(await playwright_instance.crawl())
+        return data[:4500]
     else:
         print('PlayWright instance is not running')
         return 'PlayWright instance is not running'
