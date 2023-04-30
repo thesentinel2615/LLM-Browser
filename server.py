@@ -1,6 +1,6 @@
 import asyncio
 from crawler import Crawler
-from quart import Quart
+from quart import Quart, request, jsonify
 import hypercorn.asyncio
 
 app = Quart(__name__)
@@ -10,6 +10,7 @@ playwright_instance = None
 async def init_crawler():
     global playwright_instance
     playwright_instance = await Crawler.create()
+    await playwright_instance.go_to_page('https://www.google.com')
 
 @app.before_serving
 async def startup():
@@ -20,7 +21,7 @@ async def shutdown():
     if playwright_instance:
         await playwright_instance.close()
 
-@app.route('/status')
+@app.get('/status')
 async def status():
     global playwright_instance
     if playwright_instance:
@@ -28,7 +29,7 @@ async def status():
     else:
         return 'PlayWright instance is not running'
     
-@app.route('/search/<query>')
+@app.post('/search/<query>')
 async def search(query):
     global playwright_instance
     if playwright_instance:
@@ -39,7 +40,7 @@ async def search(query):
         print('PlayWright instance is not running')
         return 'PlayWright instance is not running'
 
-@app.route('/crawl')
+@app.post('/crawl')
 async def crawl():
     global playwright_instance
     if playwright_instance:
@@ -50,7 +51,7 @@ async def crawl():
         print('PlayWright instance is not running')
         return 'PlayWright instance is not running'
 
-@app.route('/page/<url>')
+@app.post('/page/<url>')
 async def page(url):
     global playwright_instance
     if playwright_instance:
@@ -61,7 +62,18 @@ async def page(url):
         print('PlayWright instance is not running')
         return 'PlayWright instance is not running'
 
-@app.route('/scroll/<direction>')
+@app.get('/currentpage')
+async def currentpage():
+    global playwright_instance
+    if playwright_instance:
+        print('Getting current page')
+        url = await playwright_instance.get_page_url()
+        return url[:100]
+    else:
+        print('PlayWright instance is not running')
+        return 'PlayWright instance is not running'
+
+@app.post('/scroll/<direction>')
 async def scroll(direction):
     global playwright_instance
     if playwright_instance:
@@ -72,7 +84,7 @@ async def scroll(direction):
         print('PlayWright instance is not running')
         return 'PlayWright instance is not running'
 
-@app.route('/click/<selector>')
+@app.post('/click/<selector>')
 async def click(selector):
     global playwright_instance
     if playwright_instance:
@@ -83,7 +95,7 @@ async def click(selector):
         print('PlayWright instance is not running')
         return 'PlayWright instance is not running'
 
-@app.route('/type/<selector>/<text>')
+@app.post('/type/<selector>/<text>')
 async def type(selector, text):
     global playwright_instance
     if playwright_instance:
@@ -94,7 +106,7 @@ async def type(selector, text):
         print('PlayWright instance is not running')
         return 'PlayWright instance is not running'
     
-@app.route('/enter')
+@app.post('/enter')
 async def enter():
     global playwright_instance
     if playwright_instance:
@@ -104,6 +116,16 @@ async def enter():
     else:
         return 'PlayWright instance is not running'
 
+@app.get('/screenshot')
+async def screenshot():
+    global playwright_instance
+    if playwright_instance:
+        print('Taking screenshot')
+        imageData = await playwright_instance.screenshot()
+        return jsonify({'image': imageData})
+    else:
+        print('PlayWright instance is not running')
+        return 'PlayWright instance is not running'
 
 if __name__ == '__main__':
     asyncio.run(hypercorn.asyncio.serve(app, hypercorn.Config()))

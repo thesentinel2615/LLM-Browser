@@ -48,6 +48,7 @@
   transform: translateY(0px);
 }
 }
+
 #FiSend:hover{
 	position: flex;
 	flex-direction: row;
@@ -55,4 +56,15 @@
 	cursor: pointer;
 	color: var(--selected-text-color);
 	font-size: 21px;
+}
+
+.sent-image {
+	padding: 10px;
+	word-wrap: break-word;
+	cursor: pointer;
+	height: 350px;
+	overflow: hidden;
+	margin-right: auto;
+	margin-left: 0;
+	object-fit: cover;
 }

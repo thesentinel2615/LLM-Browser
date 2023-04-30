@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Message from './Message';
 import ChatboxInput from './Chatinput';
-import { defaultPrompt } from './Constants';
+import { handleCrawlerCommand } from "./api";
 
 const Chatwindow = () => {
     const [messages, setMessages] = useState([]);
@@ -23,6 +23,11 @@ const Chatwindow = () => {
     }, []);
 
     const handleUserSend = async (text) => {
+        if(text.length === 0){
+            setMessages([...messages, {sender: 'Chatbot', text: "**Confirmed!**", isIncoming: true, timestamp: Date.now()}]);
+            await handleCrawlerCommand('confirm');
+            return;
+        }
         const newMessage = {
             sender: 'User',
             text: text,
@@ -30,7 +35,7 @@ const Chatwindow = () => {
             timestamp: Date.now(),
         };
         let updatedMessages = [...messages, newMessage];
-        if(text.startsWith('!')){ // If the user message starts with an exclamation mark, it is a command
+        if(text.startsWith('!')){
             const command = text.split(' ')[0].substring(1);
             const objective = text.split(' ').slice(1).join(' ');
             switch (command.toLowerCase()) {
@@ -38,19 +43,24 @@ const Chatwindow = () => {
                     setMessages([{sender: 'Chatbot', text: "Welcome to the LLM Browser! Type in your request prefixed by '!objective' to get started!", isIncoming: true, timestamp: Date.now()}]);
                     break;
                 case 'confirm':
-                    setMessages([...updatedMessages, {sender: 'Chatbot', text: "Confirmed!", isIncoming: true, timestamp: Date.now()}]);
-                    handleCrawlerCommand('confirm');
+                    setMessages([...updatedMessages, {sender: 'Chatbot', text: "**Confirmed!**", isIncoming: true, timestamp: Date.now()}]);
+                    await handleCrawlerCommand('confirm');
                     break;
                 case 'objective':
-                    setMessages([...updatedMessages, {sender: 'Chatbot', text: "Objective: " + objective, isIncoming: true, timestamp: Date.now()}]);
-                    handleCrawlerCommand('objective', objective);
+                    setMessages([...updatedMessages, {sender: 'Chatbot', text: "is typing", isIncoming: true, timestamp: Date.now()}]);
+                    let newCommand = await handleCrawlerCommand('objective', objective);
+                    if(newCommand){
+                        setMessages([...updatedMessages, {sender: 'Chatbot', text: "**Recommend Command:** " + newCommand.text, image: newCommand.image, isIncoming: true, timestamp: Date.now()}]);
+                    }
+                    break;
                 case 'help':
-                    setMessages([...updatedMessages, {sender: 'Chatbot', text: "Available commands: !confirm, !help, !restart.", isIncoming: true, timestamp: Date.now()}]);
+                    setMessages([...updatedMessages, {sender: 'Chatbot', text: "**Available commands:** !confirm, !help, !restart.", isIncoming: true, timestamp: Date.now()}]);
+                    break;
                 default:
-                    setMessages([...updatedMessages, {sender: 'Chatbot', text: "Command not recognized!", isIncoming: true, timestamp: Date.now()}]);
+                    setMessages([...updatedMessages, {sender: 'Chatbot', text: "**Command not recognized!**", isIncoming: true, timestamp: Date.now()}]);
                     break;
             }
-        } // Update messages state with the new user message
+        }
     };
       
     const handleMessageKeyDown = (event) => {

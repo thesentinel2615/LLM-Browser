@@ -10,6 +10,12 @@ function Message({ message, index, editedMessageIndex, handleEditMessage, handle
     <div key={index} className={`inline-flex text-left text-white ${message.isIncoming ? "incoming-message" : "outgoing-message"} pop-in`}>
       <div className="message-info flex flex-col border-2 border-gray-500 box-border w-full rounded-lg p-2">
         <p className="sender-name m-0 inline-flex items-end font-bold">{message.sender}</p>
+        {message.image && (
+          <>
+            <p className='message-text m-0 font-sans text-white h-auto py-1 box-border resize-none overflow-y-auto min-w-full'><i>Current Page:</i></p>
+            <img className="sent-image" src={`screenshots/${message.image}`} alt="Current Page"/>
+          </>
+        )}
         {editedMessageIndex === index ? (
           <div className="flex items-center flex-wrap w-full">
             <TextareaAutosize

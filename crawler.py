@@ -1,3 +1,5 @@
+import base64
+import datetime
 from playwright.async_api import async_playwright
 import time
 from sys import argv, exit, platform
@@ -16,7 +18,7 @@ class Crawler:
 	@classmethod
 	async def create(cls):
 		playwright = await async_playwright().__aenter__()
-		browser = await playwright.chromium.launch(headless=False)
+		browser = await playwright.chromium.launch(headless=True)
 		crawler_instance = cls(playwright)
 		crawler_instance.browser = browser
 		crawler_instance.page = await browser.new_page()
@@ -42,7 +44,15 @@ class Crawler:
 			await self.page.evaluate(
 				"(document.scrollingElement || document.body).scrollTop = (document.scrollingElement || document.body).scrollTop + window.innerHeight;"
 			)
-
+	
+	async def get_page_url(self):
+		return self.page.url
+	
+	async def screenshot(self):
+		current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+		await self.page.screenshot(path=f'screenshots/{current_time}.png')
+		return f'{current_time}.png'
+	
 	async def click(self, id):
 		js = """
 		links = document.getElementsByTagName("a");
