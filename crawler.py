@@ -105,25 +105,16 @@ class Crawler:
 
 	async def summarize_results(self):
 		results = []
-		for i in range(3):
-			try:
-				# Get the search result URL
-				link = await self.page.locator(".tF2Cxc a[href]").nth(i)
-				url = await link.get_attribute("href")
+		try:
+			# Extract the main content using Beautiful Soup
+			html_content = await self.page.content()
+			soup = await BeautifulSoup(html_content, "lxml")
+			main_content = await soup.find("body")
 
-				# Navigate to the search result URL
-				await self.page.goto(url, timeout=10000)
-				await self.page.wait_for_load_state("networkidle")
-
-				# Extract the main content using Beautiful Soup
-				html_content = await self.page.content()
-				soup = await BeautifulSoup(html_content, "lxml")
-				main_content = await soup.find("body")
-
-				# Append the main content to the results array
-				results.append(main_content)
-			except:
-				print(f"Error navigating to {url}")
+			# Append the main content to the results array
+			results.append(main_content)
+		except:
+			print(f"Error summarizing results.")
 		return results
 
 	    

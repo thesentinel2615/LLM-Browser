@@ -59,7 +59,7 @@ const SettingsForm = () => {
 
     return (
     <div className="flex items-center justify-center w-full">
-        <div className="bg-orange-800 p-4 rounded-lg shadow-md w-1/2 border-2 border-solid border-gray-500">
+        <div className="bg-green-800 p-4 rounded-lg shadow-md w-1/2 border-2 border-solid border-emerald-500">
             <div
             className="cursor-pointer flex items-center justify-between text-2xl font-bold"
             onClick={toggleAccordion}
@@ -82,10 +82,10 @@ const SettingsForm = () => {
                             id="basePrompt"
                             value={basePrompt}
                             onChange={(e) => {setBasePrompt(e.target.value); saveBrowserSettings();}}
-                            className="mt-1 block w-full border border-gray-700 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                            className="mt-1 block w-full border border-emerald-700 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                             />
                             <button 
-                            className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                            className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-emerald bg-emerald-600 hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                             onClick={() => setBasePrompt(defaultPrompt)}>
                             Reset to Default Prompt
                             </button>
@@ -97,7 +97,7 @@ const SettingsForm = () => {
                     id="fullAutoMode"
                     checked={fullAutoMode}
                     onChange={(e) => {setFullAutoMode(e.target.checked); saveBrowserSettings();}}
-                    className="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300 rounded"
+                    className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-emerald-300 rounded"
                     />
                     <label htmlFor="fullAutoMode" className="ml-2 text-xl">
                     Full Auto Mode
@@ -110,7 +110,7 @@ const SettingsForm = () => {
                     id="apiKey"
                     value={apiKey}
                     onChange={(e) => {setApiKey(e.target.value); saveBrowserSettings();}}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                    className="mt-1 block w-full border border-emerald-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                     />
                 </div>
                 <h1 className="block text-xl font-medium">Generation Settings:</h1>
@@ -126,7 +126,7 @@ const SettingsForm = () => {
                 </div>
                 <button
                     onClick={() => saveBrowserSettings()}
-                    className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                    className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-emerald bg-emerald-600 hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
                     Save Settings
                 </button>

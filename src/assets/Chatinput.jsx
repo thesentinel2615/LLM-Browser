@@ -30,7 +30,7 @@ function ChatboxInput({ onSend }) {
   
   return (
     <>
-    <div className="input-box relative overflow-x-auto flex flex-col justify-start p-2 bg-orange-800 rounded-b-lg px-1 mt-1 h-18 send-input-container border-2 border-solid border-gray-500">
+    <div className="input-box relative overflow-x-auto flex flex-col justify-start p-2 bg-green-800 rounded-b-lg px-1 mt-1 h-18 send-input-container border-2 border-solid border-emerald-500">
       <div className="send-input flex justify-between items-center">
         <textarea
           id="input"
@@ -40,7 +40,7 @@ function ChatboxInput({ onSend }) {
           onChange={handleTextChange}
           onKeyDown={handleKeyDown}
           ref={textAreaRef}
-          className="min-h-[1rem] bg-transparent backdrop-blur border-none outline-none text-white flex-grow ml-2 h-auto overflow-y-scroll resize-none noto-sans-font "
+          className="min-h-[1rem] bg-transparent backdrop-blur border-none outline-none text-emerald flex-grow ml-2 h-auto overflow-y-scroll resize-none noto-sans-font "
         />
         <div onClick={handleSendClick} id="FiSend" title={'Send message'}>
           <HiOutlinePaperAirplane />

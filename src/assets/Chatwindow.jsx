@@ -45,6 +45,9 @@ const Chatwindow = () => {
             switch (command.toLowerCase()) {
                 case 'restart':
                     setMessages([{sender: 'System', text: "Welcome to the LLM Browser! Type in your request prefixed by '!objective' to get started!", isIncoming: true, timestamp: Date.now()}]);
+                    localStorage.removeItem('conversation');
+                    localStorage.removeItem('objective');
+                    localStorage.removeItem('previousCommand');
                     break;
                 case 'confirm':
                     setMessages([...updatedMessages, {sender: 'System', text: "is typing", isIncoming: true, timestamp: Date.now()}]);
@@ -55,6 +58,7 @@ const Chatwindow = () => {
                     break;
                 case 'objective':
                     setMessages([...updatedMessages, {sender: 'System', text: "is typing", isIncoming: true, timestamp: Date.now()}]);
+                    localStorage.removeItem('previousCommand');
                     newCommand = await handleCrawlerCommand('objective', objective);
                     if(newCommand){
                         setMessages([...updatedMessages, {sender: 'System', text: "**Recommend Command:** " + newCommand.text, image: newCommand.image, url: newCommand.url, isIncoming: true, timestamp: Date.now()}]);
@@ -68,7 +72,7 @@ const Chatwindow = () => {
                     }
                     break;
                 case 'help':
-                    setMessages([...updatedMessages, {sender: 'System', text: "**Available commands:** !confirm, !help, !restart.", isIncoming: true, timestamp: Date.now()}]);
+                    setMessages([...updatedMessages, {sender: 'System', text: "**Available commands:** !confirm, !help, !restart, !objective, !suggest.", isIncoming: true, timestamp: Date.now()}]);
                     break;
                 default:
                     setMessages([...updatedMessages, {sender: 'System', text: "**Command not recognized!**", isIncoming: true, timestamp: Date.now()}]);
@@ -88,7 +92,7 @@ const Chatwindow = () => {
         <>
         <div className="flex flex-col">
             <div className="mx-auto w-1/2">
-                <div className="h-[calc(75vh-7rem)] overflow-x-hidden relative flex flex-col justify-start bg-orange-800 mt-4 rounded-t-lg p-2 shadow-sm backdrop-blur-md md:h-[75vh] border-2 border-solid border-gray-500">
+                <div className="h-[calc(75vh-7rem)] overflow-x-hidden relative flex flex-col justify-start bg-green-800 mt-4 rounded-t-lg p-2 shadow-sm backdrop-blur-md md:h-[75vh] border-2 border-solid border-emerald-500">
                     {messages.map((message, index) => (
                         <Message
                         key={index}
