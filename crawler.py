@@ -36,6 +36,7 @@ class Crawler:
 		self.page_element_buffer = {}
 
 	async def scroll(self, direction):
+		await self.page.wait_for_load_state("networkidle")
 		if direction == "up":
 			await self.page.evaluate(
 				"(document.scrollingElement || document.body).scrollTop = (document.scrollingElement || document.body).scrollTop - window.innerHeight;"
@@ -46,10 +47,11 @@ class Crawler:
 			)
 	
 	async def get_page_url(self):
+		await self.page.wait_for_load_state("networkidle")
 		return self.page.url
 	
 	async def screenshot(self):
-		time.sleep(10)
+		await self.page.wait_for_load_state("networkidle")
 		current_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 		await self.page.screenshot(path=f'screenshots/{current_time}.png')
 		return f'{current_time}.png'
@@ -61,6 +63,7 @@ class Crawler:
 			links[i].removeAttribute("target");
 		}
 		"""
+		await self.page.wait_for_load_state("networkidle")
 		await self.page.evaluate(js)
 
 		element = self.page_element_buffer.get(int(id))
@@ -77,6 +80,7 @@ class Crawler:
 		await self.page.keyboard.type(text)
 
 	async def enter(self):
+		await self.page.wait_for_load_state("networkidle")
 		await self.page.keyboard.press("Enter")
 
 	async def search_google(self, query):
@@ -114,7 +118,7 @@ class Crawler:
 		page = self.page
 		page_element_buffer = self.page_element_buffer
 		start = time.time()
-
+		await page.wait_for_load_state("networkidle")
 		page_state_as_text = []
 
 		device_pixel_ratio = await page.evaluate("window.devicePixelRatio")

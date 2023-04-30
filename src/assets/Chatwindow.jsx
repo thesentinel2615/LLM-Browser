@@ -18,17 +18,17 @@ const Chatwindow = () => {
             setMessages(JSON.parse(savedConversation).messages);
         }
         if(messages.length === 0){
-            setMessages([{sender: 'Chatbot', text: "Welcome to the LLM Browser! Type in your request prefixed by '!objective' to get started!", isIncoming: true, timestamp: Date.now()}]);
+            setMessages([{sender: 'System', text: "Welcome to the LLM Browser! Type in your request prefixed by '!objective' to get started!", isIncoming: true, timestamp: Date.now()}]);
         }
     }, []);
 
     const handleUserSend = async (text) => {
         let newCommand;
         if(text.length === 0){
-            setMessages([...messages, {sender: 'Chatbot', text: "is typing", isIncoming: true, timestamp: Date.now()}]);
+            setMessages([...messages, {sender: 'System', text: "is typing", isIncoming: true, timestamp: Date.now()}]);
             newCommand = await handleCrawlerCommand('confirm');
             if(newCommand){
-                setMessages([...messages, {sender: 'Chatbot', text: "**Recommend Command:** " + newCommand.text, image: newCommand.image, isIncoming: true, timestamp: Date.now()}]);
+                setMessages([...messages, {sender: 'System', text: "**Recommend Command:** " + newCommand.text, image: newCommand.image, url: newCommand.url, isIncoming: true, timestamp: Date.now()}]);
             }
             return;
         }
@@ -44,27 +44,27 @@ const Chatwindow = () => {
             const objective = text.split(' ').slice(1).join(' ');
             switch (command.toLowerCase()) {
                 case 'restart':
-                    setMessages([{sender: 'Chatbot', text: "Welcome to the LLM Browser! Type in your request prefixed by '!objective' to get started!", isIncoming: true, timestamp: Date.now()}]);
+                    setMessages([{sender: 'System', text: "Welcome to the LLM Browser! Type in your request prefixed by '!objective' to get started!", isIncoming: true, timestamp: Date.now()}]);
                     break;
                 case 'confirm':
-                    setMessages([...updatedMessages, {sender: 'Chatbot', text: "is typing", isIncoming: true, timestamp: Date.now()}]);
+                    setMessages([...updatedMessages, {sender: 'System', text: "is typing", isIncoming: true, timestamp: Date.now()}]);
                     newCommand = await handleCrawlerCommand('confirm');
                     if(newCommand){
-                        setMessages([...updatedMessages, {sender: 'Chatbot', text: "**Recommend Command:** " + newCommand.text, image: newCommand.image, isIncoming: true, timestamp: Date.now()}]);
+                        setMessages([...updatedMessages, {sender: 'System', text: "**Recommend Command:** " + newCommand.text, image: newCommand.image, url: newCommand.url, isIncoming: true, timestamp: Date.now()}]);
                     }
                     break;
                 case 'objective':
-                    setMessages([...updatedMessages, {sender: 'Chatbot', text: "is typing", isIncoming: true, timestamp: Date.now()}]);
+                    setMessages([...updatedMessages, {sender: 'System', text: "is typing", isIncoming: true, timestamp: Date.now()}]);
                     newCommand = await handleCrawlerCommand('objective', objective);
                     if(newCommand){
-                        setMessages([...updatedMessages, {sender: 'Chatbot', text: "**Recommend Command:** " + newCommand.text, image: newCommand.image, isIncoming: true, timestamp: Date.now()}]);
+                        setMessages([...updatedMessages, {sender: 'System', text: "**Recommend Command:** " + newCommand.text, image: newCommand.image, url: newCommand.url, isIncoming: true, timestamp: Date.now()}]);
                     }
                     break;
                 case 'help':
-                    setMessages([...updatedMessages, {sender: 'Chatbot', text: "**Available commands:** !confirm, !help, !restart.", isIncoming: true, timestamp: Date.now()}]);
+                    setMessages([...updatedMessages, {sender: 'System', text: "**Available commands:** !confirm, !help, !restart.", isIncoming: true, timestamp: Date.now()}]);
                     break;
                 default:
-                    setMessages([...updatedMessages, {sender: 'Chatbot', text: "**Command not recognized!**", isIncoming: true, timestamp: Date.now()}]);
+                    setMessages([...updatedMessages, {sender: 'System', text: "**Command not recognized!**", isIncoming: true, timestamp: Date.now()}]);
                     break;
             }
         }

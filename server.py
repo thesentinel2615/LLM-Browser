@@ -70,7 +70,7 @@ async def currentpage():
     if playwright_instance:
         print('Getting current page')
         url = await playwright_instance.get_page_url()
-        return url[:100]
+        return url
     else:
         print('PlayWright instance is not running')
         return 'PlayWright instance is not running'

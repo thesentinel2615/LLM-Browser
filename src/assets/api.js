@@ -107,12 +107,13 @@ async function getNewObjective(arg) {
     }
     let imageData = await axios.get(`/py/screenshot`);
     if(browser.data !== null){
-        prompt = await fillPrompt(browser.data, objective, url.data, previousCommand);
+        prompt = await fillPrompt(browser.data, objective, (url.data).slice(0, 100), previousCommand);
         response = await axios.post(`/api/completion`, { endpoint: settings.api_key, prompt: prompt, settings: settings});
         generatedText = response.data.results[0];
         let commandData = {
             'text': generatedText,
             'image': imageData.data.image,
+            'url': url.data,
         }
         localStorage.setItem('objective', objective);
         localStorage.setItem('previousCommand', generatedText);
