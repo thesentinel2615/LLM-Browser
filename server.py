@@ -51,8 +51,10 @@ async def crawl():
         print('PlayWright instance is not running')
         return 'PlayWright instance is not running'
 
-@app.post('/page/<url>')
-async def page(url):
+@app.post('/page')
+async def page():
+    data = await request.get_json()
+    url = data['url']
     global playwright_instance
     if playwright_instance:
         print('Going to page ' + url)

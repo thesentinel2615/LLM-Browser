@@ -23,9 +23,13 @@ const Chatwindow = () => {
     }, []);
 
     const handleUserSend = async (text) => {
+        let newCommand;
         if(text.length === 0){
-            setMessages([...messages, {sender: 'Chatbot', text: "**Confirmed!**", isIncoming: true, timestamp: Date.now()}]);
-            await handleCrawlerCommand('confirm');
+            setMessages([...messages, {sender: 'Chatbot', text: "is typing", isIncoming: true, timestamp: Date.now()}]);
+            newCommand = await handleCrawlerCommand('confirm');
+            if(newCommand){
+                setMessages([...messages, {sender: 'Chatbot', text: "**Recommend Command:** " + newCommand.text, image: newCommand.image, isIncoming: true, timestamp: Date.now()}]);
+            }
             return;
         }
         const newMessage = {
@@ -43,12 +47,15 @@ const Chatwindow = () => {
                     setMessages([{sender: 'Chatbot', text: "Welcome to the LLM Browser! Type in your request prefixed by '!objective' to get started!", isIncoming: true, timestamp: Date.now()}]);
                     break;
                 case 'confirm':
-                    setMessages([...updatedMessages, {sender: 'Chatbot', text: "**Confirmed!**", isIncoming: true, timestamp: Date.now()}]);
-                    await handleCrawlerCommand('confirm');
+                    setMessages([...updatedMessages, {sender: 'Chatbot', text: "is typing", isIncoming: true, timestamp: Date.now()}]);
+                    newCommand = await handleCrawlerCommand('confirm');
+                    if(newCommand){
+                        setMessages([...updatedMessages, {sender: 'Chatbot', text: "**Recommend Command:** " + newCommand.text, image: newCommand.image, isIncoming: true, timestamp: Date.now()}]);
+                    }
                     break;
                 case 'objective':
                     setMessages([...updatedMessages, {sender: 'Chatbot', text: "is typing", isIncoming: true, timestamp: Date.now()}]);
-                    let newCommand = await handleCrawlerCommand('objective', objective);
+                    newCommand = await handleCrawlerCommand('objective', objective);
                     if(newCommand){
                         setMessages([...updatedMessages, {sender: 'Chatbot', text: "**Recommend Command:** " + newCommand.text, image: newCommand.image, isIncoming: true, timestamp: Date.now()}]);
                     }
