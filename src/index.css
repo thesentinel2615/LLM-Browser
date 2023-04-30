@@ -70,7 +70,7 @@
 }
 
 ::-webkit-scrollbar {
-  width: 1em;
+  width: .75em;
   background-color: transparent;
 }
 
