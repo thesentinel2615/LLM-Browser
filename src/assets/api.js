@@ -50,6 +50,7 @@ export async function fillPrompt(browser, objective, url, previousCommand) {
 export async function handleCrawlerCommand(command, arg) {
     switch(command.toLowerCase()){
         case 'objective':
+            localStorage.setItem('isDone', 'false');
             await axios.post('/py/page', {
             url: 'https://www.google.com',
             });
@@ -62,7 +63,7 @@ export async function handleCrawlerCommand(command, arg) {
             } else if (currentCom.startsWith("SCROLL DOWN")) {
                 await axios.post(`/py/scroll/${'down'}`);
             } else if (currentCom.startsWith("DONE")) {
-                console.log("Done!");
+                localStorage.setItem('isDone', 'true');
             } else if (currentCom.startsWith("CLICK")) {
                 console.log(currentCom);
                 let commasplit = currentCom.split(",");
@@ -92,7 +93,6 @@ export async function handleCrawlerCommand(command, arg) {
 }
 async function getNewObjective(arg) {
     let settings = await getSettings();
-    let genSettings = oai_defaults;
     let response;
     let generatedText;
     let prompt;
@@ -108,7 +108,7 @@ async function getNewObjective(arg) {
     let imageData = await axios.get(`/py/screenshot`);
     if(browser.data !== null){
         prompt = await fillPrompt(browser.data, objective, url.data, previousCommand);
-        response = await axios.post(`/api/completion`, { endpoint: settings.api_key, prompt: prompt, settings: genSettings});
+        response = await axios.post(`/api/completion`, { endpoint: settings.api_key, prompt: prompt, settings: settings});
         generatedText = response.data.results[0];
         let commandData = {
             'text': generatedText,

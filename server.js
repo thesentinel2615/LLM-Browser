@@ -114,8 +114,8 @@ app.post('/completion', async (req, res) => {
       response = await openaiApi.createCompletion({
         model: 'text-davinci-003',
         prompt: prompt,
-        temperature: settings.temperature,
-        max_tokens: settings.max_tokens,
+        temperature: parseFloat(settings.temperature),
+        max_tokens: parseInt(settings.max_tokens),
       });
       res.json({ results: [response.data.choices[0].text]})
     } catch (error) {
